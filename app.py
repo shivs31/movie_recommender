@@ -10,21 +10,18 @@ import json
 import streamlit as st
 from st_aggrid import AgGrid
 
-
-
-BEST_MOVIES = pd.read_csv('best_movies.csv')
-
+BEST_MOVIES = pd.read_csv("best_movies.csv")
 BEST_MOVIES.rename(
     index=lambda x: x+1,
     inplace=True
     )
 TITLES = ["---"] + list(BEST_MOVIES['title'].sort_values()) 
 
-with open('neighbour_recommender.pkl', 'rb') as file:
-    DISTANCE_MODEL = pickle.load(file)
+#with open('distance_recommender.pkl', 'rb') as file:
+#    DISTANCE_MODEL = pickle.load(file)
 
-with open('nmf.pkl', 'rb') as file:
-    NMF_MODEL = pickle.load(file)
+#with open('nmf_recommender.pkl', 'rb') as file:
+#    NMF_MODEL = pickle.load(file)
 
 # sidebar
 with st.sidebar:
@@ -45,11 +42,7 @@ with st.sidebar:
             ]
         ) 
 
-##########################################################
-# Welcome Page
-##########################################################
-
-if page == "welcome page":
+if page == "--------":
     # slogan
     st.write("""
     *Movies are like magic tricks (Jeff Bridges)*
@@ -71,8 +64,7 @@ elif page == "popular movies":
         n = st.slider(
         label="how many movies?",
         min_value=1,
-        max_value=10,
-        value=5
+        max_value=10
         ) 
     with col3:
         st.markdown("####")
@@ -82,9 +74,9 @@ elif page == "popular movies":
         show_button = st.button(label="show movies") 
     
     if genre:
-        popular_movies = BEST_MOVIES[['movie_title','genres']]
+        popular_movies = BEST_MOVIES[['title','genres']]
     else:
-        popular_movies = BEST_MOVIES[['movie_title']]
+        popular_movies = BEST_MOVIES[['title']]
 
     st.markdown("###")
     if show_button:
@@ -178,7 +170,5 @@ else:
 
     #load user query
     user_query = json.load(open("user_query.json"))
-
-    AgGrid(BEST_MOVIES.head)
     
     
