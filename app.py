@@ -10,18 +10,20 @@ import json
 import streamlit as st
 from st_aggrid import AgGrid
 
-BEST_MOVIES = pd.read_csv("best_movies.csv")
+from recommenders import recommend_nmf, recommender_nbcf
+
+BEST_MOVIES = pd.read_csv("data/best_movies.csv")
 BEST_MOVIES.rename(
     index=lambda x: x+1,
     inplace=True
     )
 TITLES = ["---"] + list(BEST_MOVIES['title'].sort_values()) 
 
-#with open('distance_recommender.pkl', 'rb') as file:
-#    DISTANCE_MODEL = pickle.load(file)
+with open('neighbour_recommender.pkl', 'rb') as file:
+    DISTANCE_MODEL = pickle.load(file)
 
-#with open('nmf_recommender.pkl', 'rb') as file:
-#    NMF_MODEL = pickle.load(file)
+with open('nmf_1000.pkl', 'rb') as file:
+    NMF_MODEL = pickle.load(file)
 
 # sidebar
 with st.sidebar:
@@ -141,12 +143,17 @@ elif page == "rate some movies":
     
     user_query = dict(zip(query_movies,query_ratings))
 
+    final_query = {}
+    for k, v in user_query.items():
+        if k != "---":
+            final_query[k] = v
+
     # get user query
     st.markdown("###")
     user_query_button = st.button(label="save user query") 
     if user_query_button:
         json.dump(
-            user_query,
+            final_query,
             open("user_query.json",'w')
             )
         st.write("")
@@ -170,5 +177,12 @@ else:
 
     #load user query
     user_query = json.load(open("user_query.json"))
-    
-    
+
+    #AgGrid(BEST_MOVIES.head)
+    if recommend_button:
+        if recommender == 'NMF Recommender':
+            recommed_movies = recommend_nmf(user_query, NMF_MODEL, ranked=10)
+        else:
+            recommed_movies = recommender_nbcf(user_query, DISTANCE_MODEL, df_score_ranked=10)
+
+        st.write(recommed_movies)
