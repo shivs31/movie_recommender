@@ -5,9 +5,6 @@ application
 import pandas as pd
 import numpy as np
 import random
-#from utils import MOVIES, nmf_model, nbcf_model
-
-
 
 def recommend_nmf(new_user_query, nmf_model, ranked=10):
     """
@@ -94,17 +91,15 @@ def recommender_nbcf(new_user_query, nbcf_model, df_score_ranked=10):
     recommendation = df_score_ranked[:3]
     return recommendation
 
+#def random_recommender(k=2):
+#    if k > len(MOVIES):
+#        print("Hey, you exceed the length of the movies")
+#        return []
+#    else:
+#        random.shuffle(MOVIES)
+#        top_k = MOVIES[:k]
+#        return top_k
 
-
-def random_recommender(k=2):
-    if k > len(MOVIES):
-        print("Hey, you exceed the length of the movies")
-        return []
-    else:
-        random.shuffle(MOVIES)
-        top_k = MOVIES[:k]
-        return top_k
-
-if __name__ == "__main__":
-    top2 = random_recommender()
-    print(top2)
+#if __name__ == "__main__":
+#    top2 = random_recommender()
+#    print(top2)
